@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 [[ $# -eq 0 ]] && echo "Usage: ./advent.sh day"
 
-echo "🦀 DAY $1"
+echo "DAY $1"
 DIR=$(printf "day%02d" $1)
 
 RED="\e[31m"
@@ -22,4 +22,4 @@ if [ ! -d $DIR ]; then
 fi
 
 cd $DIR
-[ -f Cargo.toml ] && printf "$RED\nRUST\n" && cargo fmt && (cargo clippy; cargo run --release --quiet)
+[ -f main.py ] && python3 main.py
