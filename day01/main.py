@@ -1,5 +1,10 @@
 import re
 
+with open("input.txt") as f:
+    data = f.read()
+
+lines = data.splitlines()
+
 mapping = [
     "one",
     "two",
@@ -18,20 +23,14 @@ def parse(match: str) -> int:
     except:
         return 1 + mapping.index(match)
 
-with open("input.txt") as f:
-    data = f.read()
+def extract(regex: str) -> int:
+    total = 0
+    for line in lines:
+        nums = re.findall(regex, line)
+        total += 10 * parse(nums[0]) + parse(nums[-1])
+    return total
 
-lines = data.splitlines()
-
-part1 = 0
-part2 = 0
-
-for line in lines:
-    nums = re.findall(r'\d', line)
-    part1 += 10 * int(nums[0], 10) + int(nums[-1], 10)
-    p2nums = re.findall(rf'(?=(\d|{"|".join(mapping)}))', line)
-    part2 += 10 * parse(p2nums[0]) + parse(p2nums[-1])
-
-
-print(f"Part one: {part1}")
-print(f"Part two: {part2}")
+p1 = extract(r'\d')
+print(f"Part one: {p1}")
+p2 = extract(rf'(?=(\d|{"|".join(mapping)}))')
+print(f"Part two: {p2}")
