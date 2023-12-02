@@ -20,7 +20,6 @@ for i, line in enumerate(lines):
             if int(num, 10) > limits[color]:
                 valid = False
     if valid:
-        print(i + 1)
         p1 += i + 1
 
 p2 = 0
