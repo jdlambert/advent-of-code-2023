@@ -4,9 +4,6 @@
 echo "DAY $1"
 DIR=$(printf "day%02d" $1)
 
-RED="\e[31m"
-GREEN="\e[32m"
-
 if [ ! -d $DIR ]; then
   URL=https://adventofcode.com/2023/day/$1
   cp -r template $DIR
