@@ -6,8 +6,6 @@ with open("input.txt") as f:
 
 grid = data.splitlines()
 
-symbols = set()
-
 def neighbors(i0, j0, j1):
     for i in range(i0 - 1, i0 + 2):
         for j in range(j0 - 1, j1 + 1):
