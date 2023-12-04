@@ -4,10 +4,17 @@ with open("input.txt") as f:
 lines = data.splitlines()
 
 p1 = 0
-p2 = 0
 
-queue = []
 wins = dict()
+counts = dict()
+
+def count(i):
+    if i not in counts:
+        total = 1
+        for j in range(wins[i]):
+            total += count(i + j + 1)
+        counts[i] = total
+    return counts[i]
 
 for line in lines:
     title, cards = line.split(":")
@@ -19,13 +26,8 @@ for line in lines:
     if matches:
         p1 += 2 ** (len(matches) - 1)
     wins[int(num, 10)] = len(matches)
-    queue.append(int(num, 10))
 
-while queue:
-    num = queue.pop()
-    p2 += 1
-    for i in range(num + 1, num + wins[num] + 1):
-        queue.append(i)
+p2 = sum(count(i + 1) for i in range(len(lines)))
 
 print(f"Part one: {p1}")
 print(f"Part two: {p2}")
