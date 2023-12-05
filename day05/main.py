@@ -1,3 +1,5 @@
+import bisect
+
 with open("input.txt") as f:
     data = f.read()
 
@@ -8,7 +10,7 @@ seeds = [int(n, 10) for n in seed_list.split()]
 
 class Transformer:
     def __init__(self, section: str):
-        self.title, *ranges = section.splitlines()
+        _, *ranges = section.splitlines()
         self.tuples = []
         for r in ranges:
             a, b, c = r.split()
@@ -16,13 +18,16 @@ class Transformer:
         self.tuples.sort()
 
     def transform(self, seed: int, seed_count: int) -> [(int, int)]:
-        for l, r, range_count in self.tuples: # First check if seed is in any range
+        i = bisect.bisect(self.tuples, seed, key=lambda x: x[0])
+        if i > 0: # Check if we're in the previous range
+            l, r, range_count = self.tuples[i - 1]
             if l <= seed < l + range_count:
                 if seed_count <= range_count - (seed - l):
                     return [(r + (seed - l), seed_count)]
                 consumed = range_count - (seed - l)
                 return [(r + (seed - l), consumed)] + self.transform(seed + consumed, seed_count - consumed)
-        for l, _, _ in self.tuples: # If not, check whether an overlapping range is to its right
+        if i < len(self.tuples): # Check if the next range overlaps
+            l, _, _ = self.tuples[i]
             if seed < l < seed + seed_count:
                 consumed = (l - seed)
                 return [(seed, consumed)] + self.transform(seed + consumed, seed_count - consumed)
