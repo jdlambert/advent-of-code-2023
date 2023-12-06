@@ -12,10 +12,10 @@ dists = [int(n, 10) for n in dist_line.split()]
 
 def is_valid(i: int, t: int) -> bool:
     rest = times[i] - t
-    print(f"{i} {t}: {dists[i] < rest * t}")
     return dists[i] < rest * t
 
 def valid_count(i: int) -> int:
+    # TODO? can be majorly optimized
     return len([t for t in range(times[i]) if is_valid(i, t)])
 
 p1 = 1
@@ -23,7 +23,6 @@ p1 = 1
 for i in range(len(times)):
     p = valid_count(i)
     p1 *= p
-    print(f"IIII {i}: {p}")
 
 def extract(line: str) -> int:
     b = []
@@ -32,7 +31,6 @@ def extract(line: str) -> int:
         b.append(t)
 
     return int(''.join(b), 10)
-
 
 times.append(extract(time_line))
 dists.append(extract(dist_line))
