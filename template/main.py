@@ -1,4 +1,4 @@
-with open("input.txt") as f:
+with open("example.txt" if "x" in sys.argv else "input.txt") as f:
     data = f.read()
 
 p1 = 0
