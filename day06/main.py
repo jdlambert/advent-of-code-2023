@@ -1,5 +1,6 @@
 import re
 import sys
+import math
 
 with open("example.txt" if "x" in sys.argv else "input.txt") as f:
     data = f.read()
@@ -10,18 +11,15 @@ _, dist_line = lines[1].split(":")
 times = [int(n, 10) for n in time_line.split()]
 dists = [int(n, 10) for n in dist_line.split()]
 
-def is_valid(i: int, t: int) -> bool:
-    rest = times[i] - t
-    return dists[i] < rest * t
-
-def valid_count(i: int) -> int:
-    # TODO? can be majorly optimized
-    return len([t for t in range(times[i]) if is_valid(i, t)])
+def valid_count(t: int, d: int) -> int:
+    hi = math.ceil((t + math.sqrt(t ** 2 - 4 * d)) / 2)
+    lo = math.floor((t - math.sqrt(t ** 2 - 4 * d)) / 2)
+    return hi - lo - 1
 
 p1 = 1
 
-for i in range(len(times)):
-    p = valid_count(i)
+for t, d in zip(times, dists):
+    p = valid_count(t, d)
     p1 *= p
 
 def extract(line: str) -> int:
@@ -32,10 +30,7 @@ def extract(line: str) -> int:
 
     return int(''.join(b), 10)
 
-times.append(extract(time_line))
-dists.append(extract(dist_line))
-
-p2 = valid_count(len(times) - 1)
+p2 = valid_count(extract(time_line), extract(dist_line))
 
 print(f"Part one: {p1}")
 print(f"Part two: {p2}")

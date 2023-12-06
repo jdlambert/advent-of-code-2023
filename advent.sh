@@ -19,4 +19,4 @@ if [ ! -d $DIR ]; then
 fi
 
 cd $DIR
-[ -f main.py ] && python3 main.py
+[ -f main.py ] && python3 main.py $@
