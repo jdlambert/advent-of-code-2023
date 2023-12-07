@@ -9,6 +9,7 @@ hand_splits = [line.split() for line in lines]
 hands = [(hand, int(bid, 10)) for (hand, bid) in hand_splits]
 
 strengths = "AKQJT98765432"
+strength_map = {c: i for i, c in enumerate(strengths)}
 
 def label_str(hand: str, wild: bool = False):
     counts = collections.Counter(hand)
@@ -32,7 +33,7 @@ def label_str(hand: str, wild: bool = False):
     return 6
 
 def tiebreak_str(hand):
-    return [strengths.index(card) for card in hand]
+    return [strength_map[card] for card in hand]
 
 p1 = 0
 hands.sort(key=lambda h: (label_str(h[0]), tiebreak_str(h[0])), reverse=True)
@@ -41,6 +42,7 @@ for rank, (_, bid) in enumerate(hands):
 
 p2 = 0
 strengths = strengths.replace('J', '') + 'J'
+strength_map = {c: i for i, c in enumerate(strengths)}
 hands.sort(key=lambda h: (label_str(h[0], True), tiebreak_str(h[0])), reverse=True)
 for rank, (_, bid) in enumerate(hands):
     p2 += (rank + 1) * bid
