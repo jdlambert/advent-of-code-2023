@@ -35,13 +35,13 @@ def tiebreak_str(hand):
     return [strengths.index(card) for card in hand]
 
 p1 = 0
-hands.sort(key=lambda h: (label_str(h[0]), *tiebreak_str(h[0])), reverse=True)
+hands.sort(key=lambda h: (label_str(h[0]), tiebreak_str(h[0])), reverse=True)
 for rank, (_, bid) in enumerate(hands):
     p1 += (rank + 1) * bid
 
 p2 = 0
 strengths = strengths.replace('J', '') + 'J'
-hands.sort(key=lambda h: (label_str(h[0], True), *tiebreak_str(h[0])), reverse=True)
+hands.sort(key=lambda h: (label_str(h[0], True), tiebreak_str(h[0])), reverse=True)
 for rank, (_, bid) in enumerate(hands):
     p2 += (rank + 1) * bid
 
