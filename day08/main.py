@@ -12,16 +12,13 @@ node_lines = node_section.splitlines()
 nodes = {}
 for line in node_lines:
     source = line[:3]
-    L = line[7:10]
-    R = line[12:15]
-    nodes[source] = (L, R)
+    nodes[source] = {"L": line[7:10], "R": line[12:15]}
 
-def cycle_len(start: str, finished) -> int:
-    cur = start
+def cycle_len(node: str, finished) -> int:
     for i, rl in enumerate(itertools.cycle(rls)):
-        if finished(cur):
+        if finished(node):
             return i
-        cur = nodes[cur][0 if rl == 'L' else 1]
+        node = nodes[node][rl]
 
 p1 = cycle_len("AAA", lambda x: x == "ZZZ")
 print(f"Part one: {p1}")
