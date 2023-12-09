@@ -1,18 +1,13 @@
 import sys
-import collections
 import itertools
 import math
 
 with open("example.txt" if "x" in sys.argv else "input.txt") as f:
     data = f.read()
 
-rls, node_section = data.split("\n\n")
-node_lines = node_section.splitlines()
+rls, _, *node_lines = data.splitlines()
 
-nodes = {}
-for line in node_lines:
-    source = line[:3]
-    nodes[source] = {"L": line[7:10], "R": line[12:15]}
+nodes = {line[:3]: {"L": line[7:10], "R": line[12:15]} for line in node_lines}
 
 def cycle_len(node: str, finished) -> int:
     for i, rl in enumerate(itertools.cycle(rls)):
