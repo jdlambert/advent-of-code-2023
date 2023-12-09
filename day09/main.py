@@ -18,8 +18,10 @@ def predict(seq: list[int]) -> int:
     
     return sum(finals), sum(initials)
 
-p1 = sum(predict(s)[0] for s in seqs)
-p2 = sum(predict(s)[1] for s in seqs)
+preds = [predict(s) for s in seqs]
+
+p1 = sum(pred[0] for pred in preds)
+p2 = sum(pred[1] for pred in preds)
 
 print(f"Part one: {p1}")
 print(f"Part two: {p2}")
