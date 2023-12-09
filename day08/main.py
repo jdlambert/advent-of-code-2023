@@ -22,5 +22,5 @@ print(f"Part one: {p1}")
 # each A is attached to one of these cycles
 # A => Z len is the same as cycle len
 # cycle_len(Z) % len(rls) == 0 for every Z
-p2 = math.lcm(*[cycle_len(start, lambda x: x[-1] == "Z") for start in nodes if start[-1] == "A"])
+p2 = math.lcm(*(cycle_len(start, lambda x: x[-1] == "Z") for start in nodes if start[-1] == "A"))
 print(f"Part two: {p2}")
