@@ -58,55 +58,17 @@ while frontier:
     for di, dj in pipes[grid[i][j]]:
         frontier.append((i + di, j + dj))
 
-marked = {}
-edge_mark = None
-def mark(i0, j0, sym):
-    global edge_mark
-    frontier = [(i0, j0)]
-    while frontier:
-        i, j = frontier.pop()
-        if (i, j) in loop or (i, j) in marked:
-            continue
-        if in_bounds(i, j):
-            marked[(i, j)] = sym
-            for i1, j1 in neighbors(i, j):
-                frontier.append((i1, j1))
-        else:
-            edge_mark = sym
+interior = set()
 
-x_dir = {
-    (-1, 0): (0, -1),
-    (1, 0): (0, 1),
-    (0, -1): (1, 0),
-    (0, 1): (-1, 0),
-}
-
-# Mark the non-loop region to the left of the direction of travel X, to the right Y
-# If we travel clockwise, X will be exterior and Y interior
-# Vice-versa for counterclockwise
-# We mark the grid edge in the same way for an easy way to identify the exterior
-
-seen = set()
-frontier = [(si, sj, (0, 0))]
-while frontier:
-    i, j, d = frontier.pop()
-    if (i, j) in seen:
-        continue
-    seen.add((i, j))
-    if grid[i][j] != 'S':
-        xdi, xdj = x_dir[d]
-        di, dj = d
-        mark(i + xdi, j + xdj, 'X')
-        mark(i - di + xdi, j - dj + xdj, 'X')
-        mark(i - xdi, j - xdj, 'Y')
-        mark(i - di - xdi, j - dj - xdj, 'Y')
-    for di, dj in pipes[grid[i][j]]:
-        frontier.append(((i + di, j + dj, (di, dj))))
-        
-exterior = {m for m in marked if marked[m] == 'X'}
-interior = {m for m in marked if marked[m] == 'Y'}
-if edge_mark == 'Y':
-    exterior, interior = interior, exterior
+for i, line in enumerate(grid):
+    inn = False
+    for j, tile in enumerate(line):
+        if tile == "S":
+            tile = s_pipe
+        if (i, j) in loop and tile in "JL|":
+            inn = not inn
+        if (i, j) not in loop and inn:
+            interior.add((i, j))
 
 mapping = {
     "F": "\u250F",
@@ -126,12 +88,10 @@ if 'p' in sys.argv:
         for j, tile in enumerate(line):
             if (i, j) in interior:
                 print(f"\x1b[0;30;41m \x1b[0m", end='')
-            elif (i, j) in exterior:
-                print(f"\x1b[0;30;47m \x1b[0m", end='')
             elif (i, j) in loop:
                 print(mapping[tile], end='')
             else:
-                print(f"\x1b[0;30;42m \x1b[0m", end='')
+                print(f"\x1b[0;30;47m \x1b[0m", end='')
         print("")
             
 print(f"Part one: {len(loop) // 2}")
