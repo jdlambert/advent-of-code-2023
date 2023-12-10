@@ -17,8 +17,16 @@ pipes = {
     '7': ((0, -1), (1, 0)),
     'F': ((0, 1), (1, 0)),
 }
+
 def in_bounds(i, j):
     return 0 <= i < len(grid) and 0 <= j < len(grid[0])
+
+def neighbors(i0, j0):
+    for i in range(i0 - 1, i0 + 2):
+        for j in range(j0 - 1, j0 + 2):
+            yield (i, j)
+
+# Determine what type of pipe S is acting as
 
 adj_pipes = []
 for (di, dj) in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
@@ -38,9 +46,10 @@ for pipe, deltas in pipes.items():
 
 pipes['S'] = pipes[s_pipe]
 
+# Discover the loop via DFS
+
 frontier = [(si, sj)]
 loop = set()
-
 while frontier:
     i, j = frontier.pop()
     if (i, j) in loop:
@@ -49,61 +58,55 @@ while frontier:
     for di, dj in pipes[grid[i][j]]:
         frontier.append((i + di, j + dj))
 
-p1 = len(loop) // 2
-
-frontier = [((si, sj), (0, 0))]
 marked = {}
-
-def neighbors(i0, j0):
-    for i in range(i0 - 1, i0 + 2):
-        for j in range(j0 - 1, j0 + 2):
-            if in_bounds(i, j):
-                yield (i, j)
-
-def mark(i, j, sym):
-    if not in_bounds(i, j):
-        return
-    frontier = [(i, j)]
+edge_mark = None
+def mark(i0, j0, sym):
+    global edge_mark
+    frontier = [(i0, j0)]
     while frontier:
         i, j = frontier.pop()
         if (i, j) in loop or (i, j) in marked:
             continue
-        marked[(i, j)] = sym
-        for i1, j1 in neighbors(i, j):
-            frontier.append((i1, j1))
+        if in_bounds(i, j):
+            marked[(i, j)] = sym
+            for i1, j1 in neighbors(i, j):
+                frontier.append((i1, j1))
+        else:
+            edge_mark = sym
 
-mark_dir = {
+x_dir = {
     (-1, 0): (0, -1),
     (1, 0): (0, 1),
     (0, -1): (1, 0),
     (0, 1): (-1, 0),
 }
 
+# Mark the non-loop region to the left of the direction of travel X, to the right Y
+# If we travel clockwise, X will be exterior and Y interior
+# Vice-versa for counterclockwise
+# We mark the grid edge in the same way for an easy way to identify the exterior
+
 seen = set()
+frontier = [(si, sj, (0, 0))]
 while frontier:
-    (i, j), d = frontier.pop()
+    i, j, d = frontier.pop()
     if (i, j) in seen:
         continue
     seen.add((i, j))
+    if grid[i][j] != 'S':
+        xdi, xdj = x_dir[d]
+        di, dj = d
+        mark(i + xdi, j + xdj, 'X')
+        mark(i - di + xdi, j - dj + xdj, 'X')
+        mark(i - xdi, j - xdj, 'Y')
+        mark(i - di - xdi, j - dj - xdj, 'Y')
     for di, dj in pipes[grid[i][j]]:
-        frontier.append(((i + di, j + dj), (di, dj)))
-        mark_di, mark_dj = mark_dir[(di, dj)]
-        mark(i + mark_di, j + mark_dj, 'X')
-        mark(i + di + mark_di, j + dj + mark_dj, 'X')
-        mark(i - mark_di, j - mark_dj, 'Y')
-        mark(i + di - mark_di, j + dj - mark_dj, 'Y')
-
-for i in range(len(grid)):
-    if (i, 0) not in loop:
-        ext_point = (i, 0)
-        break
-
+        frontier.append(((i + di, j + dj, (di, dj))))
+        
 exterior = {m for m in marked if marked[m] == 'X'}
 interior = {m for m in marked if marked[m] == 'Y'}
-if marked[ext_point] == 'Y':
+if edge_mark == 'Y':
     exterior, interior = interior, exterior
-
-print(f"Part one: {p1}")
 
 mapping = {
     "F": "\u250F",
@@ -115,6 +118,8 @@ mapping = {
 }
 
 mapping['S'] = mapping[s_pipe]
+
+# Optionally, print a visual aid
 
 if 'p' in sys.argv:
     for i, line in enumerate(grid):
@@ -129,6 +134,5 @@ if 'p' in sys.argv:
                 print(f"\x1b[0;30;42m \x1b[0m", end='')
         print("")
             
-p2 = len(interior)
-
-print(f"Part two: {p2}")
+print(f"Part one: {len(loop) // 2}")
+print(f"Part two: {len(interior)}")
