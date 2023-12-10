@@ -6,22 +6,21 @@ with open("example.txt" if "x" in sys.argv else "input.txt") as f:
 seqs = [[int(n) for n in seq.split()] for seq in data.splitlines()]
 
 def predict(seq: list[int]) -> int:
-    cur = seq
-    finals = []
-    initials = []
-    initial_sign = 1
-    while any(n != 0 for n in cur):
-        finals.append(cur[-1])
-        initials.append(initial_sign * cur[0])
-        initial_sign *= -1
-        cur = [b - a for a, b in zip(cur, cur[1:])]
+    l = r = 0
+    l_sign = 1
+
+    while any(n != 0 for n in seq):
+        l += l_sign * seq[0]
+        l_sign *= -1
+        r += seq[-1]
+        seq = [b - a for a, b in zip(seq, seq[1:])]
     
-    return sum(finals), sum(initials)
+    return l, r
 
 preds = [predict(s) for s in seqs]
 
-p1 = sum(pred[0] for pred in preds)
-p2 = sum(pred[1] for pred in preds)
+p1 = sum(pred[1] for pred in preds)
+p2 = sum(pred[0] for pred in preds)
 
 print(f"Part one: {p1}")
 print(f"Part two: {p2}")
