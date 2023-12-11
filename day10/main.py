@@ -37,9 +37,9 @@ interior = set()
 for i, line in enumerate(grid):
     ext = True
     for j, tile in enumerate(line):
-        if (i, j) in loop and tile in "JL|" or tile == "S" and UP in s_dirs:
+        if (i, j) in loop and (tile in "JL|" or tile == "S" and UP in s_dirs):
             ext = not ext
-        if (i, j) not in loop and not ext:
+        elif (i, j) not in loop and not ext:
             interior.add((i, j))
 
 if 'p' in sys.argv:
