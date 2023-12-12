@@ -6,14 +6,14 @@ with open("example.txt" if "x" in sys.argv else "input.txt") as f:
 
 def valid_count(springs, groups):
 
+    S, G = len(springs), len(groups)
+
     @functools.cache
     def count(si, gi, run):
-        if si == len(springs):
-            if run:
-                return gi < len(groups) and groups[gi] == run and gi + 1 == len(groups)
-            return gi == len(groups)
-        if gi == len(groups):
-            return '#' not in springs[si:]   
+        if si == S:
+            return gi == G or gi + 1 == G and groups[gi] == run
+        if gi == G:
+            return '#' not in springs[si:]
         potential = 0
         if springs[si] in '.?':
             if run == 0:
@@ -21,7 +21,7 @@ def valid_count(springs, groups):
             elif run == groups[gi]:
                 potential += count(si + 1, gi + 1, 0)
         if springs[si] in '#?':
-            if run + 1 <= groups[gi]:
+            if run < groups[gi]:
                 potential += count(si + 1, gi, run + 1)
         return potential
 

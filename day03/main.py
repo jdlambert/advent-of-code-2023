@@ -36,7 +36,7 @@ p2 = 0
 for i, line in enumerate(grid):
     for j, char in enumerate(line):
         if char not in '0123456789.':
-            adjacent = list({n for n in num_neighbors(i, j)})
+            adjacent = list(set(num_neighbors(i, j)))
             if len(adjacent) == 2:
                 p2 += int(adjacent[0].group(0), 10) * int(adjacent[1].group(0), 10)
 
