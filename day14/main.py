@@ -38,7 +38,6 @@ def weight():
         for tile in line:
             if tile == 'O':
                 total += len(grid) - i
-    total += 0
     return total
 
 rotate(-1, 0)
@@ -50,12 +49,8 @@ rotate(0, 1)
 records = {}
 weights = {}
 i = 1
-while True:
-    s = str(grid)
-    if s in records:
-        start = records[s]
-        period = i - start
-        break
+s = str(grid)
+while s not in records:
     records[s] = i
     weights[i] = weight()
     rotate(-1, 0)
@@ -63,7 +58,10 @@ while True:
     rotate(1, 0)
     rotate(0, 1)
     i += 1
+    s = str(grid)
 
+start = records[s]
+period = i - start
 p2 = weights[start + (1000000000 - start) % period]
 
 print(f"Part one: {p1}")
