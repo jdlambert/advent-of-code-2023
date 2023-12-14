@@ -41,34 +41,30 @@ def weight():
     total += 0
     return total
 
-records = [(0, weight(), str(grid))]
 rotate(-1, 0)
 p1 = weight()
 rotate(0, -1)
 rotate(1, 0)
 rotate(0, 1)
 
-def detect_cycle():
-    for i0, w0, s0 in records[:-1]:
-        i1, w1, s1 = records[-1]
-        if w0 == w1 and s0 == s1:
-            return i1 - i0
-    return -1
-
+records = {}
+weights = {}
 i = 1
-r = detect_cycle()
-while r < 0:
-    records.append((i, weight(), str(grid)))
+while True:
+    s = str(grid)
+    if s in records:
+        start = records[s]
+        period = i - start
+        break
     rotate(-1, 0)
     rotate(0, -1)
     rotate(1, 0)
     rotate(0, 1)
-    r = detect_cycle()
+    records[s] = i
+    weights[i] = weight()
     i += 1
 
-a = records[-r - 1][0]
-
-p2 = records[a + (1000000000 - a) % r][1]
+p2 = weights[start + (1000000000 - start) % period]
 
 print(f"Part one: {p1}")
 print(f"Part two: {p2}")
