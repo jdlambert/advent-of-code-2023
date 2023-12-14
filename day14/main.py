@@ -56,12 +56,12 @@ while True:
         start = records[s]
         period = i - start
         break
+    records[s] = i
+    weights[i] = weight()
     rotate(-1, 0)
     rotate(0, -1)
     rotate(1, 0)
     rotate(0, 1)
-    records[s] = i
-    weights[i] = weight()
     i += 1
 
 p2 = weights[start + (1000000000 - start) % period]
