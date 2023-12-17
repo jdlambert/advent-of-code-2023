@@ -14,14 +14,13 @@ def find(i, j, di, dj):
     return i, j
 
 def enum(di, dj):
-    ri = range(len(grid) - 1, -1, -1) if di == 1 else range(len(grid))
-    rj = range(len(grid[0]) - 1, -1, -1) if dj == 1 else range(len(grid))
+    ri, rj = range(len(grid)), range(len(grid[0]))
     if di:
-        for i in ri:
+        for i in reversed(ri) if di == 1 else ri:
             for j in rj:
                 yield i, j
-    elif dj:
-        for j in rj:
+    else:
+        for j in reversed(rj) if dj == 1 else rj:
             for i in ri:
                 yield i, j
 
