@@ -8,24 +8,24 @@ with open("example.txt" if "x" in sys.argv else "input.txt") as f:
 bricks = [tuple([int(v) for v in re.findall('\d+', line)]) for line in data.splitlines()]
 bricks.sort(key=lambda b: b[2])
 
-tops = collections.defaultdict(lambda: (0, -1))
+tops = collections.defaultdict(lambda: (-1, -1))
 above = collections.defaultdict(set)
 below = collections.defaultdict(set)
 for b, (i0, j0, k0, i1, j1, k1) in enumerate(bricks):
-    collision = 0
+    max_top = 0
     for i in range(i0, i1 + 1):
         for j in range(j0, j1 + 1):
             top, support = tops[(i, j)]
-            if top > collision:
-                collision = top
+            if top > max_top:
+                max_top = top
                 below[b].clear()
-            if top == collision:
+            if top == max_top:
                 below[b].add(support)
- 
+
     for support in below[b]:
         above[support].add(b)
 
-    drop = max(k0 - collision - 1, 0)
+    drop = k0 - max_top - 1
     for i in range(i0, i1 + 1):
         for j in range(j0, j1 + 1):
             tops[(i, j)] = (k1 - drop, b)
@@ -42,7 +42,7 @@ for b in range(len(bricks)):
             continue
         fallen.add(fall)
         for supported in above[fall]:
-            if not (below[supported] - fallen):
+            if not below[supported] - fallen:
                 to_fall.append(supported)
     p1 += len(fallen) == 1
     p2 += len(fallen) - 1

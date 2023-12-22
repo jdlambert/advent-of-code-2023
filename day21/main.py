@@ -5,37 +5,35 @@ with open("example.txt" if "x" in sys.argv else "input.txt") as f:
     data = f.read()
 
 grid = {
-    i + j*1j: tile
+    i + j*1j
     for i, line in enumerate(data.splitlines())
     for j, tile in enumerate(line)
     if tile in '.S'
 }
 
 N = max(int(p.real + 1) for p in grid)
+mid = N//2
+last = N - 1
+S = mid + mid*1j
 
-frontier = {p for p in grid if grid[p] == 'S'}
+def walk(start, steps):
+    ps = {start}
+    for _ in range(steps):
+        ps = {p + dp for p in ps for dp in (1, -1, 1j, -1j) if p + dp in grid}
+    return len(ps)
 
-p1 = 0
-p2 = 0
-target = 26501365
-
-vals = []
-
-for i in itertools.count(1):
-    frontier = {
-          p + dp for p in frontier for dp in (1, -1, 1j, -1j)
-          if (p + dp).real % N + (p + dp).imag % N * 1j in grid
-    }
-    if i == 64:
-        p1 = len(frontier)
-    if i % N == target % N:
-        vals.append(len(frontier))
-        if len(vals) == 3:
-            break
-
-q = target // N
-a, b, c = [b - a for a, b in zip([0] + vals, vals)]
-p2 = a + q*b + q*(q - 1)*(c - b)//2
-
+p1 = walk(S, 64)
 print(f"Part one: {p1}")
+
+evens = walk(S, 2 * N)
+odds = walk(S, 2 * N + 1)
+corners = (0, last, last*1j, last + last*1j)
+A = sum(walk(p, (3 * N - 3) // 2) for p in corners)
+B = sum(walk(p, (N - 3) // 2) for p in corners)
+midpoints = (mid, mid*1j, last + mid*1j, mid + last*1j)
+T = sum(walk(p, N - 1) for p in midpoints)
+
+Q = 26501365 // N
+p2 = (Q - 1)**2*odds + Q**2*evens + (Q - 1)*A + Q*B + T
+
 print(f"Part two: {p2}")
