@@ -39,10 +39,9 @@ for i in itertools.count(1):
     while pulses:
         sym, sig, src = pulses.popleft()
         counts[sig] += 1
-        if types[sym] == '%':
-            if sig == 0:
-                states[sym] ^= 1
-                pulses.extend((out, states[sym], sym) for out in outputs[sym])
+        if types[sym] == '%' and not sig:
+            states[sym] ^= 1
+            pulses.extend((out, states[sym], sym) for out in outputs[sym])
         elif types[sym] == '&':
             states[sym][src] = sig
             send = 1 - all(v == 1 for v in states[sym].values())
