@@ -12,28 +12,25 @@ tops = collections.defaultdict(lambda: (0, -1))
 above = collections.defaultdict(set)
 below = collections.defaultdict(set)
 for b, brick in enumerate(bricks):
-    collision = max(
-        tops[(i, j)][0]
-        for i in range(brick[0], brick[3] + 1)
-        for j in range(brick[1], brick[4] + 1)
-    )
-
-    below[b] = {
-        tops[(i, j)][1]
-        for i in range(brick[0], brick[3] + 1)
-        for j in range(brick[1], brick[4] + 1)
-        if tops[(i, j)][0] == collision
-    }
-
-    for b1 in below[b]:
-        above[b1].add(b)
-
-    dk = max(brick[2] - collision - 1, 0)
+    collision = 0
     for i in range(brick[0], brick[3] + 1):
         for j in range(brick[1], brick[4] + 1):
-            tops[(i, j)] = (brick[5] - dk, b)
+            top, support = tops[(i, j)]
+            if top > collision:
+                collision = top
+                below[b].clear()
+            if top == collision:
+                below[b].add(support)
+ 
+    for support in below[b]:
+        above[support].add(b)
 
-p1 = sum(1 for b in range(len(bricks)) if all(len(below[b1]) > 1 for b1 in above[b]))
+    drop = max(brick[2] - collision - 1, 0)
+    for i in range(brick[0], brick[3] + 1):
+        for j in range(brick[1], brick[4] + 1):
+            tops[(i, j)] = (brick[5] - drop, b)
+
+p1 = 0
 p2 = 0
 
 for b in range(len(bricks)):
@@ -44,9 +41,10 @@ for b in range(len(bricks)):
         if fall in fallen:
             continue
         fallen.add(fall)
-        for a in above[fall]:
-            if not (below[a] - fallen):
-                to_fall.append(a)
+        for supported in above[fall]:
+            if not (below[supported] - fallen):
+                to_fall.append(supported)
+    p1 += len(fallen) == 1
     p2 += len(fallen) - 1
 
 print(f"Part one: {p1}")
