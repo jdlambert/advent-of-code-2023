@@ -11,10 +11,10 @@ bricks.sort(key=lambda b: b[2])
 tops = collections.defaultdict(lambda: (0, -1))
 above = collections.defaultdict(set)
 below = collections.defaultdict(set)
-for b, brick in enumerate(bricks):
+for b, (i0, j0, k0, i1, j1, k1) in enumerate(bricks):
     collision = 0
-    for i in range(brick[0], brick[3] + 1):
-        for j in range(brick[1], brick[4] + 1):
+    for i in range(i0, i1 + 1):
+        for j in range(j0, j1 + 1):
             top, support = tops[(i, j)]
             if top > collision:
                 collision = top
@@ -25,10 +25,10 @@ for b, brick in enumerate(bricks):
     for support in below[b]:
         above[support].add(b)
 
-    drop = max(brick[2] - collision - 1, 0)
-    for i in range(brick[0], brick[3] + 1):
-        for j in range(brick[1], brick[4] + 1):
-            tops[(i, j)] = (brick[5] - drop, b)
+    drop = max(k0 - collision - 1, 0)
+    for i in range(i0, i1 + 1):
+        for j in range(j0, j1 + 1):
+            tops[(i, j)] = (k1 - drop, b)
 
 p1 = 0
 p2 = 0
