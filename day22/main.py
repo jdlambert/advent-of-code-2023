@@ -37,14 +37,16 @@ p1 = sum(1 for b in range(len(bricks)) if all(len(below[b1]) > 1 for b1 in above
 p2 = 0
 
 for b in range(len(bricks)):
-    frontier = [b]
+    to_fall = [b]
     fallen = set()
-    while frontier:
-        fall = frontier.pop()
+    while to_fall:
+        fall = to_fall.pop()
+        if fall in fallen:
+            continue
         fallen.add(fall)
         for a in above[fall]:
             if not (below[a] - fallen):
-                frontier.append(a)
+                to_fall.append(a)
     p2 += len(fallen) - 1
 
 print(f"Part one: {p1}")
