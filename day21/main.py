@@ -13,51 +13,26 @@ grid = {
 
 N = max(int(p.real + 1) for p in grid)
 
-p1 = 0
 ps = collections.deque([(N//2 + N//2*1j, 0)])
-evens = set()
-odds = set()
+visited = {}
 while ps:
     p, s = ps.popleft()
-    if s == 65:
-        p1 = len(evens)
-    if s == (5 * N) // 2 + 1:
-        break
-    if p.real%N + p.imag%N*1j not in grid or p in evens or p in odds:
+    if p not in grid or p in visited:
         continue
-    if s & 1:
-        odds.add(p)
-    else:
-        evens.add(p)
+    visited[p] = s
     ps.extend((p + dp, s + 1) for dp in (1, -1, 1j, -1j))
 
-print(f"Part one: {p1}")
+def constrain(pred):
+    return sum(1 for v in visited.values() if pred(v))
 
-def constrain(s, i0, i1, j0, j1):
-    return len([p for p in s if i0 <= p.real < i1 and j0 <= p.imag < j1])
+print(f"Part one: {constrain(lambda v: v < 65 and v % 2 == 0)}")
 
-EVEN = constrain(evens, 0, N, 0, N)
-ODD = constrain(odds, 0, N, 0, N)
-BIG_DIAG = sum(constrain(odds, *c) for c in [
-    (N, 2*N, N, 2*N),
-    (N, 2*N, -N, 0),
-    (-N, 0, N, 2*N),
-    (-N, 0, -N, 0)
-])
-LIL_DIAG = sum(constrain(odds, *c) for c in [
-    (-2*N, -N, N, 2*N),
-    (N, 2*N, 2*N, 3*N),
-    (2*N, 3*N, -N, 0),
-    (-N, 0, -2*N, -N)
-])
-TIP = sum(constrain(odds, *c) for c in [
-    (-2*N, -N, 0, N),
-    (0, N, 2*N, 3*N),
-    (2*N, 3*N, 0, N),
-    (0, N, -2*N, -N)
-])
+EVEN = constrain(lambda v: v % 2 == 0)
+ODD = constrain(lambda v: v % 2 != 0)
+EVEN_CORNERS = constrain(lambda v: v % 2 == 0 and v > 65)
+ODD_CORNERS = constrain(lambda v: v % 2 == 1 and v > 65)
 
 Q = 26501365 // N
-p2 = (Q - 1)**2*ODD + Q**2*EVEN + (Q - 1)*BIG_DIAG + Q*LIL_DIAG + TIP
+p2 = (Q + 1)**2*ODD + Q**2*EVEN - (Q + 1)*ODD_CORNERS + Q*EVEN_CORNERS
 
 print(f"Part two: {p2}")
