@@ -5,7 +5,7 @@ import re
 with open("example.txt" if "x" in sys.argv else "input.txt") as f:
     data = f.read()
 
-bricks = [tuple([int(v) for v in re.findall('\d+', line)]) for line in data.splitlines()]
+bricks = [tuple(int(v) for v in re.findall(r'\d+', line)) for line in data.splitlines()]
 bricks.sort(key=lambda b: b[2])
 
 tops = collections.defaultdict(lambda: (-1, -1))
