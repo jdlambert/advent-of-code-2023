@@ -43,8 +43,9 @@ print(f"Part one: {p1}")
 
 def collisions(di, dj, getter):
     ij = None
-    for i, s0 in enumerate(stones):
-        for s1 in stones[i + 1:]:
+    subset = stones[:4]
+    for i, s0 in enumerate(subset):
+        for s1 in subset[i + 1:]:
             collision = collide(s0, s1, getter, (di, dj))
             if collision is PARALLEL:
                 continue
